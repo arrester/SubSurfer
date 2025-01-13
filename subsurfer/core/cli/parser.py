@@ -10,7 +10,7 @@ import argparse
 def create_parser():
     """Create and return argument parser"""
     parser = argparse.ArgumentParser(
-        description='SubSurfer - Fast web bug bounty asset identification tool'
+        description='SubSurfer - Red Teaming and Web Bug Bounty Fast Asset Identification Tool'
     )
     
     parser.add_argument('-t', '--target', 
