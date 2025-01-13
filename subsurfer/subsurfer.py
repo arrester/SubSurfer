@@ -48,7 +48,7 @@ async def main():
     web_services = await controller.scan_web_services(all_subdomains, ports)
     
     # 결과 저장
-    output_path = args.output or controller.get_output_path()
+    output_path = controller.get_output_path(args.output) if args.output else controller.get_output_path()
     results_dict = {
         'subdomains': all_subdomains,
         'web_services': web_services.get('web_services', {}),

@@ -1,5 +1,5 @@
 """
-SubSurfer - Fast Web Bug Bounty Asset Identification Tool
+SubSurfer - Red Teaming and Web Bug Bounty Fast Asset Identification Tool
 """
 
-__version__ = "0.1"
+__version__ = "0.1.7"

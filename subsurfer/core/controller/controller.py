@@ -32,16 +32,29 @@ class SubSurferController:
         self.active_handler = ActiveHandler(target)
         self.ports = None
         
-    def get_output_path(self) -> str:
-        """결과 저장 경로 생성"""
+    def get_output_path(self, user_path: str = None) -> str:
+        """결과 저장 경로 생성
+        
+        Args:
+            user_path (str, optional): 사용자가 지정한 저장 경로
+        """
         timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M')
         filename = f"subsurfer_{self.target}_{timestamp}.txt"
         
-        results_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'results')
-        if not os.path.exists(results_dir):
-            os.makedirs(results_dir)
-            
-        return os.path.join(results_dir, filename)
+        if user_path:
+            # 사용자가 지정한 경로 사용
+            if os.path.isdir(user_path):
+                # 디렉토리가 지정된 경우
+                return os.path.join(user_path, filename)
+            else:
+                # 파일명까지 지정된 경우
+                return user_path
+        else:
+            # 기본 results 디렉토리 사용
+            results_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'results')
+            if not os.path.exists(results_dir):
+                os.makedirs(results_dir)
+            return os.path.join(results_dir, filename)
         
     def save_results(self, results: Dict[str, Any], output_path: str) -> None:
         """결과 저장"""
@@ -109,24 +122,67 @@ class SubSurferController:
                     web_urls.append(f"{url}:{port}")
             
             if web_urls:
+                print_status("발견된 웹 서버:", "info")
                 for url in sorted(web_urls):
                     console.print(f"[cyan]{url}[/]")
             else:
                 # 포트스캔 결과가 없으면 웹 서버로 확인된 서브도메인만 출력
                 web_servers = results_dict.get('web_servers', set())
-                for subdomain in sorted(web_servers):
-                    console.print(f"[cyan]https://{subdomain}[/]")
-                
+                if web_servers:
+                    print_status("발견된 웹 서버:", "info")
+                    for subdomain in sorted(web_servers):
+                        console.print(f"[cyan]https://{subdomain}[/]")
+            
         elif output_mode == "sub":
             # 웹 서버가 아니지만 활성화된 서브도메인 출력
             enabled_services = results_dict.get('enabled_services', set())
-            for subdomain in sorted(enabled_services):
-                console.print(f"[cyan]{subdomain}[/]")
+            if enabled_services:
+                print_status("활성화된 서비스:", "info")
+                for subdomain in sorted(enabled_services):
+                    console.print(f"[cyan]{subdomain}[/]")
             
         else:
-            print_status(f"\n총 {len(results_dict['subdomains'])}개의 서브도메인을 찾았습니다.", "success")
+            # 전체 결과 출력
+            print_status(f"총 {len(results_dict['subdomains'])}개의 서브도메인을 찾았습니다.", "success")
+            
+            # 서브도메인 목록 출력
+            if results_dict['subdomains']:
+                print_status("발견된 서브도메인:", "info")
+                for subdomain in sorted(results_dict['subdomains']):
+                    console.print(f"[cyan]{subdomain}[/]")
+            
+            # 웹 서버 목록 출력
+            if results_dict['web_servers']:
+                print("")
+                print_status("발견된 웹 서버:", "info")
+                for server in sorted(results_dict['web_servers']):
+                    console.print(f"[cyan]{server}[/]")
+            
+            # 웹 서비스 상세 정보 출력
+            if results_dict.get('web_services'):
+                print("")
+                print_status("웹 서비스 상세 정보:", "info")
+                for url, analysis in sorted(results_dict['web_services'].items()):
+                    console.print(f"[cyan]{url}[/]: {analysis}")
+            
+            # 포트 스캔 결과 출력
+            if results_dict.get('all_urls'):
+                print("")
+                print_status("포트 스캔 결과:", "info")
+                for subdomain, urls in sorted(results_dict['all_urls'].items()):
+                    for url, port in urls:
+                        console.print(f"[cyan]{url}:{port}[/]")
+            
+            # 활성화된 서비스 출력
+            if results_dict['enabled_services']:
+                print("")
+                print_status("활성화된 서비스:", "info")
+                for service in sorted(results_dict['enabled_services']):
+                    console.print(f"[cyan]{service}[/]")
+            
             if output_path:
-                print_status(f"결과가 {output_path}에 저장되었습니다.", "success")
+                print("")
+                print_status(f"결과가 저장된 경로: {output_path}", "success")
 
     def set_ports(self, ports: List[int]) -> None:
         """포트 범위 설정"""

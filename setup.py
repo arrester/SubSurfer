@@ -1,15 +1,19 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 setup(
     name="subsurfer",
-    version="0.1",
+    version="0.1.7",
     description="Red Teaming and Web Bug Bounty Fast Asset Identification Tool",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     author="arrester",
     author_email="arresterloyal@gmail.com",
     url="https://github.com/arrester/subsurfer",
-    packages=find_packages(),
+    packages=find_namespace_packages(include=['subsurfer*']),
+    package_data={
+        'subsurfer': ['core/config/*.yaml'],
+    },
+    include_package_data=True,
     install_requires=[
         'rich>=13.7.0',
         'aiohttp>=3.9.1',

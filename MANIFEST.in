@@ -1,5 +1,4 @@
 include README.md
-include LICENSE
-include requirements.txt
+include subsurfer/core/config/config.yaml
 recursive-include subsurfer *
 recursive-include tests * 
