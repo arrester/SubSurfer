@@ -32,42 +32,37 @@ class ActiveHandler:
         self.subdomains: Set[str] = set()
         
     async def collect(self) -> Set[str]:
-        """
-        여러 액티브 스캐너를 사용하여 서브도메인 수집
-        
-        Returns:
-            Set[str]: 수집된 고유한 서브도메인 목록
-        """
+        """서브도메인 수집 실행"""
         try:
-            # DNS 존 전송 스캔
-            try:
-                console.print("[bold blue][*][/] [white]DNS 존 전송 스캔 시작...[/]")
-                zone_scanner = ZoneScanner(self.domain)
-                zone_results = await zone_scanner.scan()
-                self.subdomains.update(zone_results)
-                console.print(f"[bold green][+][/] [white]DNS 존 전송 스캔 완료: {len(zone_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]DNS 존 전송 스캔 중 오류 발생: {str(e)}[/]")
+            # 모든 스캐너 초기화
+            scanners = [
+                ('DNS 존 전송', ZoneScanner(self.domain)),
+                ('SRV 레코드', SRVScanner(self.domain)),
+                ('리버스 DNS Sweep', SweepScanner(self.domain))
+            ]
             
-            # SRV 레코드 스캔
-            try:
-                console.print("[bold blue][*][/] [white]SRV 레코드 스캔 시작...[/]")
-                srv_scanner = SRVScanner(self.domain)
-                srv_results = await srv_scanner.scan()
-                self.subdomains.update(srv_results)
-                console.print(f"[bold green][+][/] [white]SRV 레코드 스캔 완료: {len(srv_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]SRV 레코드 스캔 중 오류 발생: {str(e)}[/]")
+            # 동시 실행할 최대 작업 수 제한
+            semaphore = asyncio.Semaphore(2)  # DNS 쿼리이므로 2개로 제한
+            
+            async def run_scanner_with_semaphore(name: str, scanner) -> Set[str]:
+                """세마포어를 사용한 스캐너 실행"""
+                async with semaphore:
+                    try:
+                        console.print(f"[bold blue][*][/] [white]{name} 스캔 시작...[/]")
+                        results = await scanner.scan()
+                        console.print(f"[bold green][+][/] [white]{name} 스캔 완료: {len(results)}개 발견[/]")
+                        return results
+                    except Exception as e:
+                        console.print(f"[bold red][-][/] [white]{name} 스캔 중 오류 발생: {str(e)}[/]")
+                        return set()
 
-            # 리버스 DNS Sweep 스캔
-            try:
-                console.print("[bold blue][*][/] [white]리버스 DNS Sweep 스캔 시작...[/]")
-                sweep_scanner = SweepScanner(self.domain)
-                sweep_results = await sweep_scanner.scan()
-                self.subdomains.update(sweep_results)
-                console.print(f"[bold green][+][/] [white]리버스 DNS Sweep 스캔 완료: {len(sweep_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]리버스 DNS Sweep 스캔 중 오류 발생: {str(e)}[/]")
+            # 모든 스캐너 동시 실행
+            tasks = [run_scanner_with_semaphore(name, scanner) for name, scanner in scanners]
+            results = await asyncio.gather(*tasks)
+            
+            # 결과 취합
+            for result in results:
+                self.subdomains.update(result)
                 
             return self.subdomains
             

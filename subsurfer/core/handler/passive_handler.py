@@ -19,6 +19,12 @@ from subsurfer.core.handler.passive.abuseipdb import AbuseIPDBScanner
 from subsurfer.core.handler.passive.anubisdb import AnubisDBScanner
 from subsurfer.core.handler.passive.digitorus import DigitorusScanner
 from subsurfer.core.handler.passive.bufferover import BufferOverScanner
+from subsurfer.core.handler.passive.urlscan import UrlscanScanner
+from subsurfer.core.handler.passive.alienvault import AlienVaultScanner
+from subsurfer.core.handler.passive.hackertarget import HackerTargetScanner
+from subsurfer.core.handler.passive.myssl import MySSLScanner
+from subsurfer.core.handler.passive.shrewdeye import ShrewdEyeScanner
+from subsurfer.core.handler.passive.subdomaincenter import SubdomainCenterScanner
 
 console = Console()
 
@@ -34,62 +40,45 @@ class PassiveHandler:
         self.subdomains: Set[str] = set()
         
     async def collect(self) -> Set[str]:
-        """
-        여러 패시브 스캐너를 사용하여 서브도메인 수집
-        
-        Returns:
-            Set[str]: 수집된 고유한 서브도메인 목록
-        """
+        """서브도메인 수집 실행"""
         try:
-            # crt.sh 스캔
-            try:
-                console.print("[bold blue][*][/] [white]crt.sh 스캔 시작...[/]")
-                crtsh = CrtshScanner(self.domain)
-                crtsh_results = await crtsh.scan()
-                self.subdomains.update(crtsh_results)
-                console.print(f"[bold green][+][/] [white]crt.sh 스캔 완료: {len(crtsh_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]crt.sh 스캔 중 오류 발생: {str(e)}[/]")
+            # 모든 스캐너 초기화
+            scanners = [
+                ('crt.sh', CrtshScanner(self.domain)),
+                ('AbuseIPDB', AbuseIPDBScanner(self.domain)),
+                ('AnubisDB', AnubisDBScanner(self.domain)),
+                ('Digitorus', DigitorusScanner(self.domain)),
+                ('BufferOver', BufferOverScanner(self.domain)),
+                ('Urlscan', UrlscanScanner(self.domain)),
+                ('AlienVault', AlienVaultScanner(self.domain)),
+                ('HackerTarget', HackerTargetScanner(self.domain)),
+                ('MySSL', MySSLScanner(self.domain)),
+                ('ShrewdEye', ShrewdEyeScanner(self.domain)),
+                ('SubdomainCenter', SubdomainCenterScanner(self.domain))
+            ]
             
-            # AbuseIPDB 스캔
-            try:
-                console.print("[bold blue][*][/] [white]AbuseIPDB 스캔 시작...[/]")
-                abuseipdb = AbuseIPDBScanner(self.domain)
-                abuseipdb_results = abuseipdb.scan()
-                self.subdomains.update(abuseipdb_results)
-                console.print(f"[bold green][+][/] [white]AbuseIPDB 스캔 완료: {len(abuseipdb_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]AbuseIPDB 스캔 중 오류 발생: {str(e)}[/]")
+            # 동시 실행할 최대 작업 수 제한
+            semaphore = asyncio.Semaphore(10)
+            
+            async def run_scanner_with_semaphore(name: str, scanner) -> Set[str]:
+                """세마포어를 사용한 스캐너 실행"""
+                async with semaphore:
+                    try:
+                        console.print(f"[bold blue][*][/] [white]{name} 스캔 시작...[/]")
+                        results = await scanner.scan()
+                        console.print(f"[bold green][+][/] [white]{name} 스캔 완료: {len(results)}개 발견[/]")
+                        return results
+                    except Exception as e:
+                        console.print(f"[bold red][-][/] [white]{name} 스캔 중 오류 발생: {str(e)}[/]")
+                        return set()
 
-            # AnubisDB 스캔
-            try:
-                console.print("[bold blue][*][/] [white]AnubisDB 스캔 시작...[/]")
-                anubisdb = AnubisDBScanner(self.domain)
-                anubisdb_results = await anubisdb.scan()
-                self.subdomains.update(anubisdb_results)
-                console.print(f"[bold green][+][/] [white]AnubisDB 스캔 완료: {len(anubisdb_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]AnubisDB 스캔 중 오류 발생: {str(e)}[/]")
-
-            # Digitorus 스캔
-            try:
-                console.print("[bold blue][*][/] [white]Digitorus 스캔 시작...[/]")
-                digitorus = DigitorusScanner(self.domain)
-                digitorus_results = await digitorus.scan()
-                self.subdomains.update(digitorus_results)
-                console.print(f"[bold green][+][/] [white]Digitorus 스캔 완료: {len(digitorus_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]Digitorus 스캔 중 오류 발생: {str(e)}[/]")
-
-            # BufferOver 스캔
-            try:
-                console.print("[bold blue][*][/] [white]BufferOver 스캔 시작...[/]")
-                bufferover = BufferOverScanner(self.domain)
-                bufferover_results = await bufferover.scan()
-                self.subdomains.update(bufferover_results)
-                console.print(f"[bold green][+][/] [white]BufferOver 스캔 완료: {len(bufferover_results)}개 발견[/]")
-            except Exception as e:
-                console.print(f"[bold red][-][/] [white]BufferOver 스캔 중 오류 발생: {str(e)}[/]")
+            # 모든 스캐너 동시 실행
+            tasks = [run_scanner_with_semaphore(name, scanner) for name, scanner in scanners]
+            results = await asyncio.gather(*tasks)
+            
+            # 결과 취합
+            for result in results:
+                self.subdomains.update(result)
                 
             return self.subdomains
             
