@@ -26,7 +26,7 @@ setup(
             'subsurfer=subsurfer.__main__:run_main',
         ],
     },
-    python_requires='>=3.13',
+    python_requires='>=3.9',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Information Technology',
