@@ -52,3 +52,6 @@ References/
 
 # tmp code
 tmp_code/
+
+# pytest cache
+.pytest_cache/
