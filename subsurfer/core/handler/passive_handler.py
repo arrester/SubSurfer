@@ -25,6 +25,8 @@ from subsurfer.core.handler.passive.hackertarget import HackerTargetScanner
 from subsurfer.core.handler.passive.myssl import MySSLScanner
 from subsurfer.core.handler.passive.shrewdeye import ShrewdEyeScanner
 from subsurfer.core.handler.passive.subdomaincenter import SubdomainCenterScanner
+from subsurfer.core.handler.passive.webarchive import WebArchiveScanner
+from subsurfer.core.handler.passive.dnsarchive import DNSArchiveScanner
 
 console = Console()
 
@@ -38,25 +40,25 @@ class PassiveHandler:
         """
         self.domain = domain
         self.subdomains: Set[str] = set()
+        self.scanners = [
+            ('crt.sh', CrtshScanner(self.domain)),
+            ('AbuseIPDB', AbuseIPDBScanner(self.domain)),
+            ('AnubisDB', AnubisDBScanner(self.domain)),
+            ('Digitorus', DigitorusScanner(self.domain)),
+            ('BufferOver', BufferOverScanner(self.domain)),
+            ('Urlscan', UrlscanScanner(self.domain)),
+            ('AlienVault', AlienVaultScanner(self.domain)),
+            ('HackerTarget', HackerTargetScanner(self.domain)),
+            ('MySSL', MySSLScanner(self.domain)),
+            ('ShrewdEye', ShrewdEyeScanner(self.domain)),
+            ('SubdomainCenter', SubdomainCenterScanner(self.domain)),
+            ('WebArchive', WebArchiveScanner(self.domain)),
+            ('DNS Archive', DNSArchiveScanner(self.domain)),
+        ]
         
     async def collect(self) -> Set[str]:
         """서브도메인 수집 실행"""
         try:
-            # 모든 스캐너 초기화
-            scanners = [
-                ('crt.sh', CrtshScanner(self.domain)),
-                ('AbuseIPDB', AbuseIPDBScanner(self.domain)),
-                ('AnubisDB', AnubisDBScanner(self.domain)),
-                ('Digitorus', DigitorusScanner(self.domain)),
-                ('BufferOver', BufferOverScanner(self.domain)),
-                ('Urlscan', UrlscanScanner(self.domain)),
-                ('AlienVault', AlienVaultScanner(self.domain)),
-                ('HackerTarget', HackerTargetScanner(self.domain)),
-                ('MySSL', MySSLScanner(self.domain)),
-                ('ShrewdEye', ShrewdEyeScanner(self.domain)),
-                ('SubdomainCenter', SubdomainCenterScanner(self.domain))
-            ]
-            
             # 동시 실행할 최대 작업 수 제한
             semaphore = asyncio.Semaphore(10)
             
@@ -65,6 +67,7 @@ class PassiveHandler:
                 async with semaphore:
                     try:
                         console.print(f"[bold blue][*][/] [white]{name} 스캔 시작...[/]")
+                        await asyncio.sleep(0.1)  # 약간의 지연 추가
                         results = await scanner.scan()
                         console.print(f"[bold green][+][/] [white]{name} 스캔 완료: {len(results)}개 발견[/]")
                         return results
@@ -73,7 +76,7 @@ class PassiveHandler:
                         return set()
 
             # 모든 스캐너 동시 실행
-            tasks = [run_scanner_with_semaphore(name, scanner) for name, scanner in scanners]
+            tasks = [run_scanner_with_semaphore(name, scanner) for name, scanner in self.scanners]
             results = await asyncio.gather(*tasks)
             
             # 결과 취합

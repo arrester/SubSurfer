@@ -5,6 +5,7 @@
 ![Version](https://img.shields.io/badge/version-0.1-orange)
 
 SubSurfer는 빠르고 효율적인 서브도메인 열거 및 웹 자산 식별 도구입니다.
+![alt text](image.png)
 
 <br>
 
@@ -168,9 +169,6 @@ if __name__ == "__main__":
 <br>
 
 ## 🗺️ ToDo
-### 0.2 버전
-- 새로운 패시브 모듈 추가
-
 ### 0.3 버전
 - JSON 결과 출력 옵션 추가
 - 새로운 패시브 모듈 추가

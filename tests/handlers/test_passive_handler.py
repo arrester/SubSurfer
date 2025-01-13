@@ -13,6 +13,8 @@ from subsurfer.core.handler.passive.hackertarget import HackerTargetScanner
 from subsurfer.core.handler.passive.myssl import MySSLScanner
 from subsurfer.core.handler.passive.shrewdeye import ShrewdEyeScanner
 from subsurfer.core.handler.passive.subdomaincenter import SubdomainCenterScanner
+from subsurfer.core.handler.passive.webarchive import WebArchiveScanner
+from subsurfer.core.handler.passive.dnsarchive import DNSArchiveScanner
 
 TEST_DOMAIN = "example.com"
 
@@ -174,3 +176,74 @@ async def test_passive_handler_rate_limiting(passive_handler):
     
     # 실행 시간이 너무 짧지 않은지 확인 (최소 1초)
     assert end_time - start_time >= 1.0
+
+@pytest.mark.asyncio
+async def test_webarchive_scanner():
+    """WebArchive 스캐너 테스트"""
+    domain = "vulnweb.com"
+    scanner = WebArchiveScanner(domain)
+    results = await scanner.scan()
+    
+    assert isinstance(results, set)
+    assert len(results) > 0
+    
+    # 결과 검증
+    for subdomain in results:
+        assert isinstance(subdomain, str)
+        assert subdomain.endswith(domain)
+        assert "." in subdomain  # 서브도메인이 있는지 확인
+
+@pytest.mark.asyncio
+async def test_dnsarchive_scanner():
+    """DNS Archive 스캐너 테스트"""
+    scanner = DNSArchiveScanner(TEST_DOMAIN)
+    results = await scanner.scan()
+    
+    assert isinstance(results, set)
+    assert len(results) > 0
+    
+    # 결과 검증
+    for subdomain in results:
+        assert isinstance(subdomain, str)
+        assert subdomain.endswith(TEST_DOMAIN)
+        assert "." in subdomain  # 서브도메인이 있는지 확인
+
+@pytest.mark.asyncio
+async def test_webarchive_scanner_invalid_domain():
+    """WebArchive 스캐너 유효하지 않은 도메인 테스트"""
+    domain = "this-domain-does-not-exist-123456789.com"
+    scanner = WebArchiveScanner(domain)
+    results = await scanner.scan()
+    
+    assert isinstance(results, set)
+    assert len(results) == 0  # 결과가 없어야 함
+
+@pytest.mark.asyncio
+async def test_dnsarchive_scanner_invalid_domain():
+    """DNS Archive 스캐너 유효하지 않은 도메인 테스트"""
+    domain = "this-domain-does-not-exist-123456789.com"
+    scanner = DNSArchiveScanner(domain)
+    results = await scanner.scan()
+    
+    assert isinstance(results, set)
+    assert len(results) == 0  # 결과가 없어야 함
+
+@pytest.mark.asyncio
+async def test_webarchive_scanner_connection_error():
+    """WebArchive 스캐너 연결 오류 테스트"""
+    scanner = WebArchiveScanner(TEST_DOMAIN)
+    scanner.base_url = "https://invalid-url-that-does-not-exist.com"
+    
+    results = await scanner.scan()
+    assert isinstance(results, set)
+    assert len(results) == 0  # 오류 발생 시 빈 set 반환
+
+@pytest.mark.asyncio
+async def test_dnsarchive_scanner_connection_error():
+    """DNS Archive 스캐너 연결 오류 테스트"""
+    scanner = DNSArchiveScanner(TEST_DOMAIN)
+    scanner.base_url = "https://invalid-url-that-does-not-exist.com"
+    
+    results = await scanner.scan()
+    assert isinstance(results, set)
+    assert len(results) == 0  # 오류 발생 시 빈 set 반환
