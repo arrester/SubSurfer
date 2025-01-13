@@ -44,11 +44,11 @@ pip install -r requirements.txt
 `subsurfer -t vulnweb.com -a`
 
 <b>포트 스캔 포함</b><br>
-`subsurfer -t vulnweb.com -dp` # 기본 포트
+`subsurfer -t vulnweb.com -dp` # 기본 포트 <br>
 `subsurfer -t vulnweb.com -p 80,443,8080-8090` # 사용자 정의 포트
 
 <b>파이프라인 출력</b><br>
-`subsurfer -t vulnweb.com -pipeweb` # 웹 서버 결과만 출력
+`subsurfer -t vulnweb.com -pipeweb` # 웹 서버 결과만 출력 <br>
 `subsurfer -t vulnweb.com -pipesub` # 서브도메인 결과만 출력
 
 ### Python 모듈로 사용
