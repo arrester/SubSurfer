@@ -38,18 +38,18 @@ pip install -r requirements.txt
 ## 📖 사용법
 ### CLI 모드
 <b>기본 스캔</b><br>
-`subsurfer -t example.com`
+`subsurfer -t vulnweb.com`
 
 <b>액티브 스캔 활성화</b><br>
-`subsurfer -t example.com -a`
+`subsurfer -t vulnweb.com -a`
 
 <b>포트 스캔 포함</b><br>
-`subsurfer -t example.com -dp` # 기본 포트
-`subsurfer -t example.com -p 80,443,8080-8090` # 사용자 정의 포트
+`subsurfer -t vulnweb.com -dp` # 기본 포트
+`subsurfer -t vulnweb.com -p 80,443,8080-8090` # 사용자 정의 포트
 
 <b>파이프라인 출력</b><br>
-`subsurfer -t example.com -pipeweb` # 웹 서버 결과만 출력
-`subsurfer -t example.com -pipesub` # 서브도메인 결과만 출력
+`subsurfer -t vulnweb.com -pipeweb` # 웹 서버 결과만 출력
+`subsurfer -t vulnweb.com -pipesub` # 서브도메인 결과만 출력
 
 ### Python 모듈로 사용
 <b>Subdomain Scan</b><br>
@@ -131,7 +131,7 @@ from subsurfer.core.controller.controller import SubSurferController
 import asyncio
 
 async def main():
-    controller = SubSurferController("example.com")
+    controller = SubSurferController("vulnweb.com")
     
     # 서브도메인 수집 및 웹 서비스 스캔
     subdomains = await controller.collect_subdomains()
