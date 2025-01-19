@@ -80,7 +80,7 @@ if __name__ == "__main__":
     async def main():
         """테스트용 메인 함수"""
         try:
-            domain = "www.naver.com"
+            domain = "vulnweb.com"
             scanner = DigitorusScanner(domain)
             results = await scanner.scan()
             
