@@ -36,24 +36,24 @@ class ActiveHandler:
         try:
             # 모든 스캐너 초기화
             scanners = [
-                ('DNS 존 전송', ZoneScanner(self.domain)),
-                ('SRV 레코드', SRVScanner(self.domain)),
-                ('리버스 DNS Sweep', SweepScanner(self.domain))
+                ('DNS Zone', ZoneScanner(self.domain)),
+                ('SRV Record', SRVScanner(self.domain)),
+                ('Reverse DNS Sweep', SweepScanner(self.domain))
             ]
             
             # 동시 실행할 최대 작업 수 제한
             semaphore = asyncio.Semaphore(2)  # DNS 쿼리이므로 2개로 제한
             
             async def run_scanner_with_semaphore(name: str, scanner) -> Set[str]:
-                """세마포어를 사용한 스캐너 실행"""
+                """semaphore thread handle"""
                 async with semaphore:
                     try:
-                        console.print(f"[bold blue][*][/] [white]{name} 스캔 시작...[/]")
+                        console.print(f"[bold blue][*][/] [white]{name} Start Scan...[/]")
                         results = await scanner.scan()
-                        console.print(f"[bold green][+][/] [white]{name} 스캔 완료: {len(results)}개 발견[/]")
+                        console.print(f"[bold green][+][/] [white]{name} Scan completed: {len(results)} found[/]")
                         return results
                     except Exception as e:
-                        console.print(f"[bold red][-][/] [white]{name} 스캔 중 오류 발생: {str(e)}[/]")
+                        console.print(f"[bold red][-][/] [white]{name} An error occurred while scanning: {str(e)}[/]")
                         return set()
 
             # 모든 스캐너 동시 실행
@@ -67,7 +67,7 @@ class ActiveHandler:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] [white]서브도메인 수집 중 오류 발생: {str(e)}[/]")
+            console.print(f"[bold red][-][/] [white]Error collecting subdomains: {str(e)}[/]")
             return set()
 
 async def main():

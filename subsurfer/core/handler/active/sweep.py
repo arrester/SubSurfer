@@ -100,7 +100,7 @@ class SweepScanner:
             return self.subdomains
             
         except Exception as e:
-            print(f"Sweep 스캔 중 오류: {str(e)}")
+            print(f"Error during Sweep scan: {str(e)}")
             return set()
 
 async def main():

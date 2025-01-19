@@ -52,5 +52,5 @@ class HackerTargetScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] HackerTarget 스캔 중 오류 발생: {str(e)}")
+            console.print(f"[bold red][-][/] Error while scanning HackerTarget: {str(e)}")
             return set()

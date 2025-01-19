@@ -62,7 +62,7 @@ class DNSArchiveScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] DNS Archive 스캔 중 오류 발생: {str(e)}")
+            console.print(f"[bold red][-][/] Error while scanning DNS Archive: {str(e)}")
             return set()
 
 if __name__ == "__main__":

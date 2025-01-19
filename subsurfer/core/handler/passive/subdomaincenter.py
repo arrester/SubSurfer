@@ -49,5 +49,5 @@ class SubdomainCenterScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] SubdomainCenter 스캔 중 오류 발생: {str(e)}")
+            console.print(f"[bold red][-][/] Error while scanning SubdomainCenter: {str(e)}")
             return set()

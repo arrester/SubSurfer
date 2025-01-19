@@ -71,7 +71,7 @@ class DigitorusScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-] Digitorus 스캔 중 오류 발생: {str(e)}[/]")
+            console.print(f"[bold red][-] Error while scanning Digitorus: {str(e)}[/]")
             return set()
 
 if __name__ == "__main__":

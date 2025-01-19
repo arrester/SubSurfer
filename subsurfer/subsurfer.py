@@ -19,10 +19,10 @@ async def main():
     
     if not args.target:
         print_usage()  # 사용법 출력
-        print_status("대상 도메인을 지정해주세요.", "error")
+        print_status("Please specify the target domain.", "error")
         sys.exit(1)
         
-    print_status(f"대상 도메인: {args.target}", "info")
+    print_status(f"Target Domain: {args.target}", "info")
     
     # 컨트롤러 초기화 및 실행
     controller = SubSurferController(
@@ -32,7 +32,7 @@ async def main():
     )
     
     if args.active:
-        print_status("액티브 스캔 모드가 활성화되었습니다.", "warning")
+        print_status("Active scan mode is enabled.", "warning")
     
     # 서브도메인 수집
     all_subdomains = await controller.collect_subdomains()

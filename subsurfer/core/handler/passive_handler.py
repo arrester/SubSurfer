@@ -66,13 +66,13 @@ class PassiveHandler:
                 """세마포어를 사용한 스캐너 실행"""
                 async with semaphore:
                     try:
-                        console.print(f"[bold blue][*][/] [white]{name} 스캔 시작...[/]")
+                        console.print(f"[bold blue][*][/] [white]{name} Start Scan...[/]")
                         await asyncio.sleep(0.1)  # 약간의 지연 추가
                         results = await scanner.scan()
-                        console.print(f"[bold green][+][/] [white]{name} 스캔 완료: {len(results)}개 발견[/]")
+                        console.print(f"[bold green][+][/] [white]{name} Scan completed: {len(results)} found[/]")
                         return results
                     except Exception as e:
-                        console.print(f"[bold red][-][/] [white]{name} 스캔 중 오류 발생: {str(e)}[/]")
+                        console.print(f"[bold red][-][/] [white]{name} An error occurred while scanning: {str(e)}[/]")
                         return set()
 
             # 모든 스캐너 동시 실행
@@ -86,7 +86,7 @@ class PassiveHandler:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] [white]서브도메인 수집 중 오류 발생: {str(e)}[/]")
+            console.print(f"[bold red][-][/] [white]Error collecting subdomain: {str(e)}[/]")
             return set()
 
 async def main():

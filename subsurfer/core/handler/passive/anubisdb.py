@@ -51,7 +51,7 @@ class AnubisDBScanner:
             return self.subdomains
             
         except Exception as e:
-            print(f"AnubisDB 스캔 중 오류 발생: {str(e)}")
+            print(f"Error while scanning AnubisDB: {str(e)}")
             return set()
 
 if __name__ == "__main__":

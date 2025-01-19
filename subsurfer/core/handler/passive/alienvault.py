@@ -48,5 +48,5 @@ class AlienVaultScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] AlienVault 스캔 중 오류 발생: {str(e)}")
+            console.print(f"[bold red][-][/] Error while scanning AlienVault: {str(e)}")
             return set()

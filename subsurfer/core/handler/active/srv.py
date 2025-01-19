@@ -69,7 +69,7 @@ class SRVScanner:
             return self.subdomains
             
         except Exception as e:
-            print(f"SRV 스캔 중 오류: {str(e)}")
+            print(f"Error during SRV scan: {str(e)}")
             return set()
 
 async def main():

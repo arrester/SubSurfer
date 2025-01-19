@@ -113,10 +113,10 @@ class WebScanner:
             """세마포어를 사용한 스캔"""
             async with semaphore:
                 try:
-                    console.print(f"[bold blue][*][/] [white]스캔 중: {subdomain}[/]")
+                    console.print(f"[bold blue][*][/] [white]Scanning: {subdomain}[/]")
                     return await self.scan_subdomain(subdomain)
                 except Exception as e:
-                    console.print(f"[bold red][-][/] [white]{subdomain} 스캔 중 오류: {str(e)}[/]")
+                    console.print(f"[bold red][-][/] [white]{subdomain} Error during scanning: {str(e)}[/]")
                     return {}
         
         # 모든 서브도메인에 대해 동시에 스캔 실행

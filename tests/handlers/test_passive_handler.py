@@ -24,7 +24,7 @@ def passive_handler():
 
 @pytest.mark.asyncio
 async def test_crtsh_scanner():
-    """crt.sh 스캐너 테스트"""
+    """crt.sh Scanner Test"""
     scanner = CrtshScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -34,7 +34,7 @@ async def test_crtsh_scanner():
 
 @pytest.mark.asyncio
 async def test_abuseipdb_scanner():
-    """AbuseIPDB 스캐너 테스트"""
+    """AbuseIPDB Scanner Test"""
     scanner = AbuseIPDBScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -43,7 +43,7 @@ async def test_abuseipdb_scanner():
 
 @pytest.mark.asyncio
 async def test_anubisdb_scanner():
-    """AnubisDB 스캐너 테스트"""
+    """AnubisDB Scanner Test"""
     scanner = AnubisDBScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -52,7 +52,7 @@ async def test_anubisdb_scanner():
 
 @pytest.mark.asyncio
 async def test_digitorus_scanner():
-    """Digitorus 스캐너 테스트"""
+    """Digitorus Scanner Test"""
     scanner = DigitorusScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -61,7 +61,7 @@ async def test_digitorus_scanner():
 
 @pytest.mark.asyncio
 async def test_bufferover_scanner():
-    """BufferOver 스캐너 테스트"""
+    """BufferOver Scanner Test"""
     scanner = BufferOverScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -70,7 +70,7 @@ async def test_bufferover_scanner():
 
 @pytest.mark.asyncio
 async def test_urlscan_scanner():
-    """Urlscan.io 스캐너 테스트"""
+    """Urlscan.io Scanner Test"""
     scanner = UrlscanScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -79,7 +79,7 @@ async def test_urlscan_scanner():
 
 @pytest.mark.asyncio
 async def test_alienvault_scanner():
-    """AlienVault 스캐너 테스트"""
+    """AlienVault Scanner Test"""
     scanner = AlienVaultScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -88,7 +88,7 @@ async def test_alienvault_scanner():
 
 @pytest.mark.asyncio
 async def test_hackertarget_scanner():
-    """HackerTarget 스캐너 테스트"""
+    """HackerTarget Scanner Test"""
     scanner = HackerTargetScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -97,7 +97,7 @@ async def test_hackertarget_scanner():
 
 @pytest.mark.asyncio
 async def test_myssl_scanner():
-    """MySSL 스캐너 테스트"""
+    """MySSL Scanner Test"""
     scanner = MySSLScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -106,7 +106,7 @@ async def test_myssl_scanner():
 
 @pytest.mark.asyncio
 async def test_shrewdeye_scanner():
-    """ShrewdEye 스캐너 테스트"""
+    """ShrewdEye Scanner Test"""
     scanner = ShrewdEyeScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -115,7 +115,7 @@ async def test_shrewdeye_scanner():
 
 @pytest.mark.asyncio
 async def test_subdomaincenter_scanner():
-    """SubdomainCenter 스캐너 테스트"""
+    """SubdomainCenter Scanner Test"""
     scanner = SubdomainCenterScanner(TEST_DOMAIN)
     results = await scanner.scan()
     assert isinstance(results, set)
@@ -124,10 +124,10 @@ async def test_subdomaincenter_scanner():
 
 @pytest.mark.asyncio
 async def test_passive_handler_collect(passive_handler):
-    """PassiveHandler collect 메서드 테스트"""
+    """PassiveHandler collect Method Test"""
     results = await passive_handler.collect()
     
-    # 기본 검증
+    # Basic Check
     assert isinstance(results, set)
     assert len(results) > 0
     
@@ -141,7 +141,7 @@ async def test_passive_handler_collect(passive_handler):
 
 @pytest.mark.asyncio
 async def test_passive_handler_error_handling(passive_handler):
-    """PassiveHandler 에러 처리 테스트"""
+    """PassiveHandler Error Test"""
     # 잘못된 도메인으로 테스트
     handler = PassiveHandler("this-domain-does-not-exist.com")
     results = await handler.collect()
@@ -152,7 +152,7 @@ async def test_passive_handler_error_handling(passive_handler):
 
 @pytest.mark.asyncio
 async def test_passive_handler_concurrent_scans(passive_handler):
-    """PassiveHandler 동시 스캔 테스트"""
+    """PassiveHandler concurrent Test"""
     # 여러 번의 동시 스캔 실행
     tasks = [passive_handler.collect() for _ in range(3)]
     results = await asyncio.gather(*tasks)
@@ -165,7 +165,7 @@ async def test_passive_handler_concurrent_scans(passive_handler):
 
 @pytest.mark.asyncio
 async def test_passive_handler_rate_limiting(passive_handler):
-    """PassiveHandler 속도 제한 테스트"""
+    """PassiveHandler rate limit Test"""
     # 연속적인 스캔 실행
     start_time = asyncio.get_event_loop().time()
     results = await passive_handler.collect()
@@ -179,7 +179,7 @@ async def test_passive_handler_rate_limiting(passive_handler):
 
 @pytest.mark.asyncio
 async def test_webarchive_scanner():
-    """WebArchive 스캐너 테스트"""
+    """WebArchive Scanner Test"""
     domain = "vulnweb.com"
     scanner = WebArchiveScanner(domain)
     results = await scanner.scan()
@@ -195,7 +195,7 @@ async def test_webarchive_scanner():
 
 @pytest.mark.asyncio
 async def test_dnsarchive_scanner():
-    """DNS Archive 스캐너 테스트"""
+    """DNS Archive Scanner Test"""
     scanner = DNSArchiveScanner(TEST_DOMAIN)
     results = await scanner.scan()
     

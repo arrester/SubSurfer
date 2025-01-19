@@ -70,5 +70,5 @@ class MySSLScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] MySSL 스캔 중 오류 발생: {str(e)}")
+            console.print(f"[bold red][-][/] Error while scanning MySSL: {str(e)}")
             return set()

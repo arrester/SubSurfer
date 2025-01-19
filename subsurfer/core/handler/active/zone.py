@@ -45,7 +45,7 @@ class ZoneScanner:
             return nameservers
             
         except Exception as e:
-            print(f"네임서버 조회 중 오류: {str(e)}")
+            print(f"Error while looking up nameserver: {str(e)}")
             return []
             
     async def zone_transfer(self, nameserver: str):
@@ -82,7 +82,7 @@ class ZoneScanner:
             return self.subdomains
             
         except Exception as e:
-            print(f"DNS 스캔 중 오류: {str(e)}")
+            print(f"Error during DNS scan: {str(e)}")
             return set()
 
 async def main():

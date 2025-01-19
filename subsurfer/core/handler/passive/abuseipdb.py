@@ -42,7 +42,7 @@ class AbuseIPDBScanner:
             return subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] AbuseIPDB 스캔 중 오류: {str(e)}")
+            console.print(f"[bold red][-][/] Error while scanning AbuseIPDB: {str(e)}")
             return set()
 
     def save_results(self, subdomains, filename="abuseipdb_result.txt"):
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     scanner = AbuseIPDBScanner(domain)
     subdomains = scanner.scan()
     
-    print(f"총 {len(subdomains)}개의 서브도메인을 찾았습니다.")
+    print(f"A total of {len(subdomains)} subdomains were found")
     print("\n".join(subdomains))
     
     scanner.save_results(subdomains)

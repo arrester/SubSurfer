@@ -74,13 +74,13 @@ class BufferOverScanner:
                                 if subdomain.endswith(f".{self.domain}") or subdomain == self.domain:
                                     self.subdomains.add(subdomain)
                     except Exception as e:
-                        print(f"레코드 처리 중 오류 발생: {str(e)}")
+                        print(f"Error while scanning Record: {str(e)}")
                         continue
                         
             return self.subdomains
             
         except Exception as e:
-            print(f"BufferOver 스캔 중 오류 발생: {str(e)}")
+            print(f"Error while scanning BufferOver: {str(e)}")
             return set()
 
 if __name__ == "__main__":

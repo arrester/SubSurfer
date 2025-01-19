@@ -96,7 +96,7 @@ class SubSurferController:
                         f.write(f"{subdomain}\n")
                 
         except Exception as e:
-            console.print(f"[bold red][-][/] 결과 저장 중 오류 발생: {str(e)}")
+            console.print(f"[bold red][-][/] Error occurred while saving results: {str(e)}")
         
     async def collect_subdomains(self) -> Set[str]:
         """서브도메인 수집 실행"""
@@ -122,14 +122,14 @@ class SubSurferController:
                     web_urls.append(f"{url}:{port}")
             
             if web_urls:
-                print_status("발견된 웹 서버:", "info")
+                print_status("Web Server Discovered:", "info")
                 for url in sorted(web_urls):
                     console.print(f"[cyan]{url}[/]")
             else:
                 # 포트스캔 결과가 없으면 웹 서버로 확인된 서브도메인만 출력
                 web_servers = results_dict.get('web_servers', set())
                 if web_servers:
-                    print_status("발견된 웹 서버:", "info")
+                    print_status("Web Server Discovered:", "info")
                     for subdomain in sorted(web_servers):
                         console.print(f"[cyan]https://{subdomain}[/]")
             
@@ -137,38 +137,38 @@ class SubSurferController:
             # 웹 서버가 아니지만 활성화된 서브도메인 출력
             enabled_services = results_dict.get('enabled_services', set())
             if enabled_services:
-                print_status("활성화된 서비스:", "info")
+                print_status("Activated Services:", "info")
                 for subdomain in sorted(enabled_services):
                     console.print(f"[cyan]{subdomain}[/]")
             
         else:
             # 전체 결과 출력
-            print_status(f"총 {len(results_dict['subdomains'])}개의 서브도메인을 찾았습니다.", "success")
+            print_status(f"A total of {len(results_dict['subdomains'])} found Subdomains", "success")
             
             # 서브도메인 목록 출력
             if results_dict['subdomains']:
-                print_status("발견된 서브도메인:", "info")
+                print_status("Subdomains Discovered:", "info")
                 for subdomain in sorted(results_dict['subdomains']):
                     console.print(f"[cyan]{subdomain}[/]")
             
             # 웹 서버 목록 출력
             if results_dict['web_servers']:
                 print("")
-                print_status("발견된 웹 서버:", "info")
+                print_status("Web Server Discovere:", "info")
                 for server in sorted(results_dict['web_servers']):
                     console.print(f"[cyan]{server}[/]")
             
             # 웹 서비스 상세 정보 출력
             if results_dict.get('web_services'):
                 print("")
-                print_status("웹 서비스 상세 정보:", "info")
+                print_status("Web Service Details:", "info")
                 for url, analysis in sorted(results_dict['web_services'].items()):
                     console.print(f"[cyan]{url}[/]: {analysis}")
             
             # 포트 스캔 결과 출력
             if results_dict.get('all_urls'):
                 print("")
-                print_status("포트 스캔 결과:", "info")
+                print_status("Port Scan Results:", "info")
                 for subdomain, urls in sorted(results_dict['all_urls'].items()):
                     for url, port in urls:
                         console.print(f"[cyan]{url}:{port}[/]")
@@ -176,13 +176,13 @@ class SubSurferController:
             # 활성화된 서비스 출력
             if results_dict['enabled_services']:
                 print("")
-                print_status("활성화된 서비스:", "info")
+                print_status("Activated Services:", "info")
                 for service in sorted(results_dict['enabled_services']):
                     console.print(f"[cyan]{service}[/]")
             
             if output_path:
                 print("")
-                print_status(f"결과가 저장된 경로: {output_path}", "success")
+                print_status(f"Path where results are saved: {output_path}", "success")
 
     def set_ports(self, ports: List[int]) -> None:
         """포트 범위 설정"""
