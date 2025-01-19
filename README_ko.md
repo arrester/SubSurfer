@@ -4,23 +4,23 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Version](https://img.shields.io/badge/version-0.2-orange)
 
-SubSurfer is a fast and efficient subdomain enumeration and web property identification tool.
+SubSurfer는 빠르고 효율적인 서브도메인 열거 및 웹 자산 식별 도구입니다.
 ![alt text](image.png)
 
 <br>
 
-## 🌟 Features
-- **Red Team/Bug Bounty Support**: Useful for both red team operations and web bug bounty projects
-- **High-Performance Scanning**: Fast subdomain enumeration using asynchronous and parallel processing
-- **Port Scanning**: Expand asset scanning range with customizable port selection
-- **Web Service Identification**: Gather environmental details such as web servers and technology stacks
-- **Pipeline Integration**: Supports integration with other tools using `-pipeweb` and `-pipesub` options
-- **Modular Design**: Can be imported and used as a Python module
-- **Continuous Updates**: - **Continuous Updates**: 새로운 passive/active 모듈 지속 추가 예정
+## 🌟 특징
+- **레드팀/버그바운티 지원**: 레드팀 작전과 웹 버그바운티 프로젝트 모두에서 활용 가능
+- **고성능 스캔**: 비동기 및 병렬 처리를 통한 빠른 서브도메인 수집
+- **포트 스캔**: 사용자 정의 포트 범위로 자산 스캔 범위 확장
+- **웹 서비스 식별**: 웹 서버, 기술 스택 등 환경 정보 수집
+- **파이프라인 지원**: `-pipeweb`, `-pipesub` 옵션으로 다른 도구와의 연계 가능
+- **모듈형 설계**: Python 모듈로 import하여 사용 가능
+- **지속적 업데이트**: 새로운 passive/active 모듈 지속 추가 예정
 
 <br>
 
-## 🚀 Installation
+## 🚀 설치
 <b>bash</b>
 ```bash
 git clone https://github.com/arrester/subsurfer.git
@@ -31,28 +31,28 @@ or <br>
 
 <b>Python</b>
 ```bash
-pip install subsurfer
+pip install -r requirements.txt
 ```
 
 <br>
 
-## 📖 Usage
-### CLI Mode
-<b>Basic Scan</b><br>
+## 📖 사용법
+### CLI 모드
+<b>기본 스캔</b><br>
 `subsurfer -t vulnweb.com`
 
-<b>Enable Active Scanning</b><br>
+<b>액티브 스캔 활성화</b><br>
 `subsurfer -t vulnweb.com -a`
 
-<b>Include Port Scanning</b><br>
-`subsurfer -t vulnweb.com -dp` # Default Port <br>
-`subsurfer -t vulnweb.com -p 80,443,8080-8090` # Custom ports
+<b>포트 스캔 포함</b><br>
+`subsurfer -t vulnweb.com -dp` # 기본 포트 <br>
+`subsurfer -t vulnweb.com -p 80,443,8080-8090` # 사용자 정의 포트
 
-<b>Pipeline Output</b><br>
-`subsurfer -t vulnweb.com -pipeweb` # Output only web server <br>
-`subsurfer -t vulnweb.com -pipesub` # Output only subdomain results
+<b>파이프라인 출력</b><br>
+`subsurfer -t vulnweb.com -pipeweb` # 웹 서버 결과만 출력 <br>
+`subsurfer -t vulnweb.com -pipesub` # 서브도메인 결과만 출력
 
-### Using as a Python Module
+### Python 모듈로 사용
 <b>Subdomain Scan</b><br>
 ```python
 from subsurfer.core.controller.controller import SubSurferController
@@ -65,11 +65,11 @@ async def main():
         active=False            # Active Scan Option
     )
     
-    # Collect subdomains
+    # 서브도메인 수집
     subdomains = await controller.collect_subdomains()
     
-    # Print results
-    print(f"Discovered Subdomains: {len(subdomains)}개")
+    # 결과 출력
+    print(f"발견된 서브도메인: {len(subdomains)}개")
     for subdomain in sorted(subdomains):
         print(subdomain)
 
@@ -90,31 +90,31 @@ async def main():
         verbose=1
     )
     
-    # Collect subdomains
+    # 서브도메인 수집
     subdomains = await controller.collect_subdomains()
     
-    # Default ports (80, 443)
+    # 기본 80, 443 스캔 설정
     ports = None
 
-    # Set port scan options
-    # ports = controller.parse_ports()  # Default ports
-    # Or specify custom ports
+    # 포트 스캔 설정
+    # ports = controller.parse_ports()  # 기본 포트
+    # 또는 사용자 지정 포트
     # ports = controller.parse_ports("80,443,8080-8090")
     
-    # Web service scanning
+    # 웹 서비스 스캔
     web_services = await controller.scan_web_services(subdomains, ports)
     
-    # Print web servers
+    # 웹 서버 출력
     print("\n웹 서버:")
     for server in sorted(web_services['web_servers']):
         print(f"https://{server}")
     
-    # Print active services
+    # 활성화된 서비스 출력    
     print("\n활성화된 서비스:")
     for service in sorted(web_services['enabled_services']):
         print(service)
         
-    # Print discovered URLs and ports
+    # URL과 포트 정보 출력
     print("\n발견된 URL:")
     for subdomain, urls in web_services['all_urls'].items():
         for url, port in urls:
@@ -134,20 +134,20 @@ import asyncio
 async def main():
     controller = SubSurferController("vulnweb.com")
     
-    # Collect subdomains and scan web services
+    # 서브도메인 수집 및 웹 서비스 스캔
     subdomains = await controller.collect_subdomains()
     web_services = await controller.scan_web_services(subdomains)
     
-    # Save results
+    # 결과 저장
     results_dict = {
         'subdomains': subdomains,
         'web_services': web_services.get('web_services', {}),
         'web_servers': web_services.get('web_servers', set()),
         'enabled_services': web_services.get('enabled_services', set()),
-        'all_urls': web_services.get('all_urls', {})  # Includes URL and port information
+        'all_urls': web_services.get('all_urls', {})  # URL과 포트 정보 포함
     }
     
-    # Generate default result file path (stored in the "results" directory)
+    # 기본 결과 파일 경로 생성 (results 디렉토리에 저장)
     output_path = controller.get_output_path()
     controller.save_results(results_dict, output_path)
 
@@ -157,39 +157,40 @@ if __name__ == "__main__":
 
 <br>
 
-## 🧪 Testing
-### Passive Handler Test
+## 🧪 테스트
+### 패시브 핸들러 테스트
 `pytest tests/handlers/test_passive_handler.py -v`
 
 <br>
 
-### Active Handler Test
+### 액티브 핸들러 테스트
 `pytest tests/handlers/test_active_handler.py -v`
 
 <br>
 
-## 🗺️ To-Do List
-### Version 0.3
-- Add JSON output option
-- Add new passive modules
-- Additional etc feature updates
+## 🗺️ ToDo
+### 0.3 버전
+- JSON 결과 출력 옵션 추가
+- 새로운 패시브 모듈 추가
+- 기타 기능 업데이트
 
-### Version 0.4
-- Add new passive modules
-- Implement subdomain takeover detection
+### 0.4 버전
+- 새로운 패시브 모듈 추가
+- 서브도메인 탈취 검사 기능
 
-### Version 0.5
-- Add new passive modules
-- Add new active modules
+### 0.5 버전
+- 새로운 패시브 모듈 추가
+- 새로운 액티브 모듈 추가
 
-## 📋 Requirements
-- Recommended: Python 3.13.0 or later
+## 📋 요구사항
+
+- Python 3.13.0 이상 권장
 - aiohttp
 - rich
-- pytest (for testing)
+- pytest (테스트용)
 
 ## 📝 라이선스
 MIT License
 
-## 🤝 Contributions
+## 🤝 기여
 Bug Report, Feature Suggestions, Pull Request
