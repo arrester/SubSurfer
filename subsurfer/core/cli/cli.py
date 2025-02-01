@@ -102,6 +102,8 @@ def print_usage():
     options_table.add_row("-p, --port", "Custom port range (e.g. 1-65535)")
     options_table.add_row("-pipeweb", "Output web server results for pipeline")
     options_table.add_row("-pipesub", "Output subdomain results for pipeline")
+    options_table.add_row("-pipeact", "Output webserver + not webserver activate server results for pipeline")
+    options_table.add_row("-pipewsub", "Output subdomain webserver host results for pipeline")
     options_table.add_row("-to, --takeover", "[Coming Soon] Subdomain takeover detection")
     
     # 출력
