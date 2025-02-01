@@ -11,7 +11,7 @@ from typing import Set
 class AnubisDBScanner:
     """AnubisDB API를 통한 서브도메인 스캐너"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인 (예: example.com)
@@ -19,6 +19,7 @@ class AnubisDBScanner:
         self.domain = domain
         self.base_url = "https://jonlu.ca/anubis/subdomains"
         self.subdomains = set()
+        self.silent = silent
         
     async def request(self, url: str) -> dict:
         """비동기 HTTP 요청 수행"""
@@ -51,7 +52,8 @@ class AnubisDBScanner:
             return self.subdomains
             
         except Exception as e:
-            print(f"Error while scanning AnubisDB: {str(e)}")
+            if not self.silent:
+                print(f"Error while scanning AnubisDB: {str(e)}")
             return set()
 
 if __name__ == "__main__":
@@ -60,7 +62,7 @@ if __name__ == "__main__":
     async def main():
         """테스트용 메인 함수"""
         try:
-            domain = "verily.com"
+            domain = "vulnweb.com"
             scanner = AnubisDBScanner(domain)
             results = await scanner.scan()
             

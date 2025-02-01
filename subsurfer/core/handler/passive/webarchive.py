@@ -14,7 +14,7 @@ console = Console()
 class WebArchiveScanner:
     """Web Archive API를 통한 서브도메인 스캐너"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인 (예: example.com)
@@ -22,6 +22,7 @@ class WebArchiveScanner:
         self.domain = domain
         self.base_url = "https://web.archive.org/cdx/search/cdx"
         self.subdomains = set()
+        self.silent = silent
         
     async def scan(self) -> Set[str]:
         """
@@ -62,7 +63,8 @@ class WebArchiveScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] Error while scanning Web Archive: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error while scanning Web Archive: {str(e)}")
             return set()
 
 if __name__ == "__main__":

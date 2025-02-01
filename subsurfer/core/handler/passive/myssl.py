@@ -28,7 +28,7 @@ class MySSLScanner:
         "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1"
     ]
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인 (예: example.com)
@@ -36,6 +36,7 @@ class MySSLScanner:
         self.domain = domain
         self.base_url = "https://myssl.com/api/v1/discover_sub_domain"
         self.subdomains = set()
+        self.silent = silent
         
     def get_random_user_agent(self) -> str:
         """랜덤 User-Agent 반환"""
@@ -70,5 +71,6 @@ class MySSLScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] Error while scanning MySSL: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error while scanning MySSL: {str(e)}")
             return set()

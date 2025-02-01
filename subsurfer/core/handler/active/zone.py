@@ -9,17 +9,22 @@ import asyncio
 import dns.resolver
 import dns.zone
 from typing import Set, List
+from rich.console import Console
+
+console = Console()
 
 class ZoneScanner:
     """DNS 스캐너 클래스"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인
+            silent (bool): 상태 메시지 출력 여부
         """
         self.domain = domain
-        self.subdomains: Set[str] = set()
+        self.silent = silent
+        self.subdomains = set()
         
     async def get_nameservers(self) -> List[str]:
         """도메인의 네임서버 주소 조회"""
@@ -45,7 +50,8 @@ class ZoneScanner:
             return nameservers
             
         except Exception as e:
-            print(f"Error while looking up nameserver: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error while looking up nameserver: {str(e)}")
             return []
             
     async def zone_transfer(self, nameserver: str):
@@ -73,22 +79,25 @@ class ZoneScanner:
             Set[str]: 발견된 서브도메인 목록
         """
         try:
-            nameservers = await self.get_nameservers()
-            
-            # 각 네임서버에 대해 존 전송 시도
-            for ns in nameservers:
-                await self.zone_transfer(ns)
-                
+            # Zone Transfer 시도
+            answers = dns.zone.from_xfr(dns.query.xfr(self.nameserver, self.domain))
+            for name, node in answers.nodes.items():
+                subdomain = str(name)
+                if subdomain != '@':  # @ 레코드 제외
+                    if subdomain.endswith('.'):
+                        subdomain = subdomain[:-1]
+                    self.subdomains.add(f"{subdomain}.{self.domain}")
             return self.subdomains
             
         except Exception as e:
-            print(f"Error during DNS scan: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error in Zone Transfer: {str(e)}")
             return set()
 
 async def main():
     """테스트용 메인 함수"""
     try:
-        domain = "verily.com"  # 테스트할 도메인
+        domain = "vulnweb.com"
         scanner = ZoneScanner(domain)
         results = await scanner.scan()
         

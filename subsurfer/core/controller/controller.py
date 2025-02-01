@@ -18,18 +18,20 @@ from subsurfer.core.handler.web.web_scanner import WebScanner
 class SubSurferController:
     """SubSurfer 메인 컨트롤러"""
     
-    def __init__(self, target: str, verbose: int = 0, active: bool = False):
+    def __init__(self, target: str, verbose: int = 0, active: bool = False, silent: bool = False):
         """
         Args:
             target (str): 대상 도메인 (예: example.com)
             verbose (int): verbose 레벨
             active (bool): 액티브 스캔 여부
+            silent (bool): 상태 메시지 출력 여부
         """
         self.target = target
-        self.verbose = verbose  # verbose 레벨 저장
+        self.verbose = verbose
         self.active = active
-        self.passive_handler = PassiveHandler(target)
-        self.active_handler = ActiveHandler(target)
+        self.silent = silent
+        self.passive_handler = PassiveHandler(target, silent=silent)
+        self.active_handler = ActiveHandler(target, silent=silent)
         self.ports = None
         
     def get_output_path(self, user_path: str = None) -> str:
@@ -113,86 +115,95 @@ class SubSurferController:
         
     def print_results(self, results_dict: Dict, output_mode: str = None, output_path: str = None) -> None:
         """결과 출력"""
-        if output_mode == "web":
-            # 웹 서버 포트스캔 결과 출력
-            web_urls = []
-            all_urls = results_dict.get('all_urls', {})
-            for subdomain, urls in all_urls.items():
-                for url, port in urls:
-                    web_urls.append(f"{url}:{port}")
-            
-            if web_urls:
-                print_status("Web Server Discovered:", "info")
-                for url in sorted(web_urls):
-                    console.print(f"[cyan]{url}[/]")
-            else:
-                # 포트스캔 결과가 없으면 웹 서버로 확인된 서브도메인만 출력
+        # 파이프라인 모드일 때는 결과만 출력
+        if output_mode:
+            if output_mode == "web":
+                # 웹 서버 포트스캔 결과만 출력
+                web_urls = []
+                all_urls = results_dict.get('all_urls', {})
+                for subdomain, urls in all_urls.items():
+                    for url, port in urls:
+                        web_urls.append(f"{url}:{port}")
+                
+                if web_urls:
+                    for url in sorted(web_urls):
+                        print(url)
+                else:
+                    # 포트스캔 결과가 없으면 웹 서버로 확인된 서브도메인만 출력
+                    web_servers = results_dict.get('web_servers', set())
+                    if web_servers:
+                        for subdomain in sorted(web_servers):
+                            print(f"https://{subdomain}")
+                            
+            elif output_mode == "sub":
+                # 서브도메인 결과만 출력
+                for subdomain in sorted(results_dict['subdomains']):
+                    print(subdomain)
+                
+            elif output_mode == "act":
+                # 웹 서버가 아니지만 활성화된 서브도메인만 출력
+                enabled_services = results_dict.get('enabled_services', set())
+                if enabled_services:
+                    for subdomain in sorted(enabled_services):
+                        print(subdomain)
+                    
+            elif output_mode == "wsub":
+                # 웹 서버로 확인된 서브도메인만 출력
                 web_servers = results_dict.get('web_servers', set())
                 if web_servers:
-                    print_status("Web Server Discovered:", "info")
                     for subdomain in sorted(web_servers):
-                        console.print(f"[cyan]https://{subdomain}[/]")
-            
-        elif output_mode == "sub":
-            # 웹 서버가 아니지만 활성화된 서브도메인 출력
-            enabled_services = results_dict.get('enabled_services', set())
-            if enabled_services:
-                print_status("Activated Services:", "info")
-                for subdomain in sorted(enabled_services):
-                    console.print(f"[cyan]{subdomain}[/]")
-            
-        else:
-            # 전체 결과 출력
-            print_status(f"A total of {len(results_dict['subdomains'])} found Subdomains", "success")
-            
-            # 서브도메인 목록 출력
-            if results_dict['subdomains']:
-                print_status("Subdomains Discovered:", "info")
-                for subdomain in sorted(results_dict['subdomains']):
-                    console.print(f"[cyan]{subdomain}[/]")
-            
-            # 웹 서버 목록 출력
-            if results_dict['web_servers']:
-                print("")
-                print_status("Web Server Discovere:", "info")
-                for server in sorted(results_dict['web_servers']):
-                    console.print(f"[cyan]{server}[/]")
-            
-            # 웹 서비스 상세 정보 출력
-            if results_dict.get('web_services'):
-                print("")
-                print_status("Web Service Details:", "info")
-                for url, analysis in sorted(results_dict['web_services'].items()):
-                    console.print(f"[cyan]{url}[/]: {analysis}")
-            
-            # 포트 스캔 결과 출력
-            if results_dict.get('all_urls'):
-                print("")
-                print_status("Port Scan Results:", "info")
-                for subdomain, urls in sorted(results_dict['all_urls'].items()):
-                    for url, port in urls:
-                        console.print(f"[cyan]{url}:{port}[/]")
-            
-            # 활성화된 서비스 출력
-            if results_dict['enabled_services']:
-                print("")
-                print_status("Activated Services:", "info")
-                for service in sorted(results_dict['enabled_services']):
-                    console.print(f"[cyan]{service}[/]")
-            
-            if output_path:
-                print("")
-                print_status(f"Path where results are saved: {output_path}", "success")
+                        print(subdomain)
+            return
+
+        # 일반 모드일 때는 기존 출력 유지
+        print_status(f"A total of {len(results_dict['subdomains'])} found Subdomains", "success")
+        
+        # 서브도메인 목록 출력
+        if results_dict['subdomains']:
+            print_status("Subdomains Discovered:", "info")
+            for subdomain in sorted(results_dict['subdomains']):
+                console.print(f"[cyan]{subdomain}[/]")
+        
+        # 웹 서버 목록 출력
+        if results_dict['web_servers']:
+            print("")
+            print_status("Web Server Discovere:", "info")
+            for server in sorted(results_dict['web_servers']):
+                console.print(f"[cyan]{server}[/]")
+        
+        # 웹 서비스 상세 정보 출력
+        if results_dict.get('web_services'):
+            print("")
+            print_status("Web Service Details:", "info")
+            for url, analysis in sorted(results_dict['web_services'].items()):
+                console.print(f"[cyan]{url}[/]: {analysis}")
+        
+        # 포트 스캔 결과 출력
+        if results_dict.get('all_urls'):
+            print("")
+            print_status("Port Scan Results:", "info")
+            for subdomain, urls in sorted(results_dict['all_urls'].items()):
+                for url, port in urls:
+                    console.print(f"[cyan]{url}:{port}[/]")
+        
+        # 활성화된 서비스 출력
+        if results_dict['enabled_services']:
+            print("")
+            print_status("Activated Services:", "info")
+            for service in sorted(results_dict['enabled_services']):
+                console.print(f"[cyan]{service}[/]")
+        
+        if output_path:
+            print("")
+            print_status(f"Path where results are saved: {output_path}", "success")
 
     def set_ports(self, ports: List[int]) -> None:
         """포트 범위 설정"""
         self.ports = ports
         
-    async def scan_web_services(self, subdomains: Set[str], ports: List[int] = None) -> Dict[str, Dict]:
+    async def scan_web_services(self, subdomains: Set[str], ports: List[int] = None) -> Dict:
         """웹 서비스 스캔"""
-        if ports:
-            self.set_ports(ports)
-        async with WebScanner(self.target, self.ports, self.verbose) as scanner:
+        async with WebScanner(self.target, ports, self.verbose, self.silent) as scanner:
             return await scanner.scan(subdomains)
 
     def parse_ports(self, port_range: str = None) -> List[int]:

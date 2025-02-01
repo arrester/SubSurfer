@@ -16,7 +16,7 @@ SubSurfer is a fast and efficient subdomain enumeration and web property identif
 - **Web Service Identification**: Gather environmental details such as web servers and technology stacks
 - **Pipeline Integration**: Supports integration with other tools using `-pipeweb` and `-pipesub` options
 - **Modular Design**: Can be imported and used as a Python module
-- **Continuous Updates**: - **Continuous Updates**: 새로운 passive/active 모듈 지속 추가 예정
+- **Continuous Updates**: - **Continuous Updates**: New passive/active modules will continue to be added
 
 <br>
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
 - rich
 - pytest (for testing)
 
-## 📝 라이선스
+## 📝 License
 MIT License
 
 ## 🤝 Contributions

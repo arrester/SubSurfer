@@ -14,24 +14,30 @@ async def main():
     """메인 함수"""
     args = parse_args()
     
-    # 배너는 항상 출력
-    print_banner()
+    # 파이프라인 모드 확인
+    is_pipeline = any([args.pipeweb, args.pipesub, args.pipeact, args.pipewsub])
+    
+    if not is_pipeline:
+        print_banner()
     
     if not args.target:
-        print_usage()  # 사용법 출력
-        print_status("Please specify the target domain.", "error")
+        if not is_pipeline:
+            print_usage()
+            print_status("Please specify the target domain.", "error")
         sys.exit(1)
         
-    print_status(f"Target Domain: {args.target}", "info")
+    if not is_pipeline:
+        print_status(f"Target Domain: {args.target}", "info")
     
     # 컨트롤러 초기화 및 실행
     controller = SubSurferController(
         target=args.target,
-        verbose=args.verbose,
-        active=args.active
+        verbose=0 if is_pipeline else args.verbose,  # 파이프라인 모드에서는 verbose 비활성화
+        active=args.active,
+        silent=is_pipeline  # 파이프라인 모드에서는 silent 모드 활성화
     )
     
-    if args.active:
+    if args.active and not is_pipeline:
         print_status("Active scan mode is enabled.", "warning")
     
     # 서브도메인 수집
@@ -59,8 +65,17 @@ async def main():
     
     controller.save_results(results_dict, output_path)
     
-    # 결과 출력
-    output_mode = "web" if args.pipeweb else "sub" if args.pipesub else None
+    # 결과 출력 모드 설정
+    output_mode = None
+    if args.pipeweb:
+        output_mode = "web"
+    elif args.pipesub:
+        output_mode = "sub"
+    elif args.pipeact:
+        output_mode = "act"
+    elif args.pipewsub:
+        output_mode = "wsub"
+        
     controller.print_results(results_dict, output_mode, output_path)
 
 if __name__ == "__main__":

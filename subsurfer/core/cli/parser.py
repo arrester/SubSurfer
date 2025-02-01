@@ -35,6 +35,10 @@ def create_parser():
                       help='Output web server results for pipeline')
     parser.add_argument('-pipesub', action='store_true',
                       help='Output subdomain results for pipeline')
+    parser.add_argument('-pipeact', action='store_true',
+                      help='Output webserver + not webserver activate server results for pipeline')
+    parser.add_argument('-pipewsub', action='store_true',
+                      help='Output subdomain webserver host results for pipeline')
     parser.add_argument('-a', '--active',
                       action='store_true',
                       help='Enable active scanning (default: passive only)')

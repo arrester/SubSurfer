@@ -23,22 +23,24 @@ console = Console()
 class ActiveHandler:
     """액티브 서브도메인 수집을 처리하는 핸들러 클래스"""
     
-    def __init__(self, domain: str):
+    def __init__(self, target: str, silent: bool = False):
         """
         Args:
-            domain (str): 대상 도메인 (예: example.com)
+            target (str): 대상 도메인 (예: example.com)
+            silent (bool): 상태 메시지 출력 여부
         """
-        self.domain = domain
-        self.subdomains: Set[str] = set()
+        self.domain = target
+        self.silent = silent
+        self.subdomains = set()
         
     async def collect(self) -> Set[str]:
         """서브도메인 수집 실행"""
         try:
             # 모든 스캐너 초기화
             scanners = [
-                ('DNS Zone', ZoneScanner(self.domain)),
-                ('SRV Record', SRVScanner(self.domain)),
-                ('Reverse DNS Sweep', SweepScanner(self.domain))
+                ('DNS Zone', ZoneScanner(self.domain, self.silent)),
+                ('SRV Record', SRVScanner(self.domain, self.silent)),
+                ('Reverse DNS Sweep', SweepScanner(self.domain, self.silent))
             ]
             
             # 동시 실행할 최대 작업 수 제한
@@ -48,12 +50,15 @@ class ActiveHandler:
                 """semaphore thread handle"""
                 async with semaphore:
                     try:
-                        console.print(f"[bold blue][*][/] [white]{name} Start Scan...[/]")
+                        if not self.silent:
+                            console.print(f"[bold blue][*][/] [white]{name} Start Scan...[/]")
                         results = await scanner.scan()
-                        console.print(f"[bold green][+][/] [white]{name} Scan completed: {len(results)} found[/]")
+                        if not self.silent:
+                            console.print(f"[bold green][+][/] [white]{name} Scan completed: {len(results)} found[/]")
                         return results
                     except Exception as e:
-                        console.print(f"[bold red][-][/] [white]{name} An error occurred while scanning: {str(e)}[/]")
+                        if not self.silent:
+                            console.print(f"[bold red][-][/] [white]{name} An error occurred while scanning: {str(e)}[/]")
                         return set()
 
             # 모든 스캐너 동시 실행
@@ -67,7 +72,8 @@ class ActiveHandler:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] [white]Error collecting subdomains: {str(e)}[/]")
+            if not self.silent:
+                console.print(f"[bold red][-][/] [white]Error collecting subdomains: {str(e)}[/]")
             return set()
 
 async def main():

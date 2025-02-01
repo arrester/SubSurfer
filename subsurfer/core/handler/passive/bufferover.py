@@ -10,11 +10,12 @@ import json
 class BufferOverScanner:
     """BufferOver API를 사용한 서브도메인 스캐너"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         self.domain = domain
         self.base_url = "https://tls.bufferover.run"
         self.subdomains = set()
         self.api_key = self._load_api_key()
+        self.silent = silent
         
     def _load_api_key(self) -> str:
         """config.yaml에서 API 키 로드"""
@@ -74,20 +75,22 @@ class BufferOverScanner:
                                 if subdomain.endswith(f".{self.domain}") or subdomain == self.domain:
                                     self.subdomains.add(subdomain)
                     except Exception as e:
-                        print(f"Error while scanning Record: {str(e)}")
+                        if not self.silent:
+                            print(f"Error while scanning Record: {str(e)}")
                         continue
                         
             return self.subdomains
             
         except Exception as e:
-            print(f"Error while scanning BufferOver: {str(e)}")
+            if not self.silent:
+                print(f"Error while scanning BufferOver: {str(e)}")
             return set()
 
 if __name__ == "__main__":
     import asyncio
     
     async def main():
-        domain = "verily.com"
+        domain = "vulnweb.com"
         scanner = BufferOverScanner(domain)
         subdomains = await scanner.scan()
         

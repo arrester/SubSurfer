@@ -33,61 +33,48 @@ console = Console()
 class PassiveHandler:
     """패시브 서브도메인 수집을 처리하는 핸들러 클래스"""
     
-    def __init__(self, domain: str):
+    def __init__(self, target: str, silent: bool = False):
         """
         Args:
-            domain (str): 대상 도메인 (예: example.com)
+            target (str): 대상 도메인 (예: example.com)
+            silent (bool): 상태 메시지 출력 여부
         """
-        self.domain = domain
+        self.target = target
+        self.silent = silent
         self.subdomains: Set[str] = set()
         self.scanners = [
-            ('crt.sh', CrtshScanner(self.domain)),
-            ('AbuseIPDB', AbuseIPDBScanner(self.domain)),
-            ('AnubisDB', AnubisDBScanner(self.domain)),
-            ('Digitorus', DigitorusScanner(self.domain)),
-            ('BufferOver', BufferOverScanner(self.domain)),
-            ('Urlscan', UrlscanScanner(self.domain)),
-            ('AlienVault', AlienVaultScanner(self.domain)),
-            ('HackerTarget', HackerTargetScanner(self.domain)),
-            ('MySSL', MySSLScanner(self.domain)),
-            ('ShrewdEye', ShrewdEyeScanner(self.domain)),
-            ('SubdomainCenter', SubdomainCenterScanner(self.domain)),
-            ('WebArchive', WebArchiveScanner(self.domain)),
-            ('DNS Archive', DNSArchiveScanner(self.domain)),
+            ('crt.sh', CrtshScanner(self.target, self.silent)),
+            ('AbuseIPDB', AbuseIPDBScanner(self.target, self.silent)),
+            ('AnubisDB', AnubisDBScanner(self.target, self.silent)),
+            ('Digitorus', DigitorusScanner(self.target, self.silent)),
+            ('BufferOver', BufferOverScanner(self.target, self.silent)),
+            ('Urlscan', UrlscanScanner(self.target, self.silent)),
+            ('AlienVault', AlienVaultScanner(self.target, self.silent)),
+            ('HackerTarget', HackerTargetScanner(self.target, self.silent)),
+            ('MySSL', MySSLScanner(self.target, self.silent)),
+            ('ShrewdEye', ShrewdEyeScanner(self.target, self.silent)),
+            ('SubdomainCenter', SubdomainCenterScanner(self.target, self.silent)),
+            ('WebArchive', WebArchiveScanner(self.target, self.silent)),
+            ('DNS Archive', DNSArchiveScanner(self.target, self.silent)),
         ]
         
     async def collect(self) -> Set[str]:
-        """서브도메인 수집 실행"""
-        try:
-            # 동시 실행할 최대 작업 수 제한
-            semaphore = asyncio.Semaphore(10)
-            
-            async def run_scanner_with_semaphore(name: str, scanner) -> Set[str]:
-                """세마포어를 사용한 스캐너 실행"""
-                async with semaphore:
-                    try:
-                        console.print(f"[bold blue][*][/] [white]{name} Start Scan...[/]")
-                        await asyncio.sleep(0.1)  # 약간의 지연 추가
-                        results = await scanner.scan()
-                        console.print(f"[bold green][+][/] [white]{name} Scan completed: {len(results)} found[/]")
-                        return results
-                    except Exception as e:
-                        console.print(f"[bold red][-][/] [white]{name} An error occurred while scanning: {str(e)}[/]")
-                        return set()
-
-            # 모든 스캐너 동시 실행
-            tasks = [run_scanner_with_semaphore(name, scanner) for name, scanner in self.scanners]
-            results = await asyncio.gather(*tasks)
-            
-            # 결과 취합
-            for result in results:
-                self.subdomains.update(result)
+        """서브도메인 수집"""
+        results = set()
+        for name, scanner in self.scanners:
+            try:
+                if not self.silent:
+                    console.print(f"[blue][*][/] {name} Start Scan...")
+                subdomains = await scanner.scan()
+                results.update(subdomains)
+                if not self.silent:
+                    console.print(f"[green][+][/] {name} Scan completed: {len(subdomains)} found")
+            except Exception as e:
+                if not self.silent:
+                    console.print(f"[red][-][/] {name} Error: {str(e)}")
                 
-            return self.subdomains
-            
-        except Exception as e:
-            console.print(f"[bold red][-][/] [white]Error collecting subdomain: {str(e)}[/]")
-            return set()
+        self.subdomains.update(results)
+        return self.subdomains
 
 async def main():
     """테스트용 메인 함수"""

@@ -14,7 +14,7 @@ console = Console()
 class ShrewdEyeScanner:
     """ShrewdEye API를 통한 서브도메인 스캐너"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인 (예: example.com)
@@ -22,6 +22,7 @@ class ShrewdEyeScanner:
         self.domain = domain
         self.base_url = "https://shrewdeye.app/api/domains"
         self.subdomains = set()
+        self.silent = silent
         
     async def scan(self) -> Set[str]:
         """
@@ -48,5 +49,6 @@ class ShrewdEyeScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] Error while scanning ShrewdEye: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error while scanning ShrewdEye: {str(e)}")
             return set()

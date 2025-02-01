@@ -8,12 +8,13 @@ from rich.console import Console
 console = Console()
 
 class AbuseIPDBScanner:
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         self.domain = domain
         self.headers = {
             'cookie': 'XSRF-TOKEN=',
             'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
         }
+        self.silent = silent
 
     async def scan(self) -> Set[str]:
         """서브도메인 스캔"""
@@ -42,7 +43,8 @@ class AbuseIPDBScanner:
             return subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-][/] Error while scanning AbuseIPDB: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error while scanning AbuseIPDB: {str(e)}")
             return set()
 
     def save_results(self, subdomains, filename="abuseipdb_result.txt"):
@@ -50,7 +52,7 @@ class AbuseIPDBScanner:
             f.write("\n".join(subdomains))
 
 if __name__ == "__main__":
-    domain = "verily.com"
+    domain = "vulnweb.com"
     scanner = AbuseIPDBScanner(domain)
     subdomains = scanner.scan()
     

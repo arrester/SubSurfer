@@ -15,7 +15,7 @@ console = Console()
 class DigitorusScanner:
     """Digitorus API를 통한 서브도메인 스캐너"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인 (예: example.com)
@@ -23,6 +23,7 @@ class DigitorusScanner:
         self.domain = domain
         self.base_url = "https://certificatedetails.com"
         self.subdomains = set()
+        self.silent = silent
         
     async def request(self, url: str) -> str:
         """비동기 HTTP 요청 수행"""
@@ -71,7 +72,8 @@ class DigitorusScanner:
             return self.subdomains
             
         except Exception as e:
-            console.print(f"[bold red][-] Error while scanning Digitorus: {str(e)}[/]")
+            if not self.silent:
+                console.print(f"[bold red][-] Error while scanning Digitorus: {str(e)}[/]")
             return set()
 
 if __name__ == "__main__":

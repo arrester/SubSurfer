@@ -8,17 +8,22 @@ SRV 스캐너 모듈 - SRV 레코드를 통한 서브도메인 수집
 import asyncio
 import dns.resolver
 from typing import Set
+from rich.console import Console
+
+console = Console()
 
 class SRVScanner:
     """SRV 스캐너 클래스"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인
+            silent (bool): 상태 메시지 출력 여부
         """
         self.domain = domain
-        self.subdomains: Set[str] = set()
+        self.silent = silent
+        self.subdomains = set()
         
         # SRV 레코드 목록
         self.srv_records = [
@@ -32,28 +37,6 @@ class SRVScanner:
             "_smtp._tcp", "_ssh._tcp", "_xmpp-client._tcp", "_xmpp-server._tcp"
         ]
 
-    async def query_srv(self, name: str) -> Set[str]:
-        """
-        SRV 레코드 조회
-        
-        Args:
-            name (str): 조회할 도메인 이름
-            
-        Returns:
-            Set[str]: 발견된 서브도메인 목록
-        """
-        try:
-            answers = dns.resolver.resolve(name, 'SRV')
-            for rdata in answers:
-                # SRV 레코드의 target에서 서브도메인 추출
-                target = str(rdata.target).rstrip('.')
-                if target.endswith(self.domain):
-                    self.subdomains.add(target)
-        except:
-            pass
-            
-        return self.subdomains
-
     async def scan(self) -> Set[str]:
         """
         SRV 스캔 수행
@@ -62,20 +45,26 @@ class SRVScanner:
             Set[str]: 발견된 서브도메인 목록
         """
         try:
-            for srv in self.srv_records:
-                name = f"{srv}.{self.domain}"
-                await self.query_srv(name)
-                
+            for service in self.srv_records:
+                try:
+                    answers = dns.resolver.resolve(f"_{service}._tcp.{self.domain}", 'SRV')
+                    for rdata in answers:
+                        target = str(rdata.target).rstrip('.')
+                        if target.endswith(self.domain):
+                            self.subdomains.add(target)
+                except:
+                    continue
             return self.subdomains
             
         except Exception as e:
-            print(f"Error during SRV scan: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error in SRV scan: {str(e)}")
             return set()
 
 async def main():
     """테스트용 메인 함수"""
     try:
-        domain = "verily.com"  # 테스트할 도메인
+        domain = "vulnweb.com"  # 테스트할 도메인
         scanner = SRVScanner(domain)
         results = await scanner.scan()
         

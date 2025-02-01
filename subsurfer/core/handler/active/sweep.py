@@ -9,17 +9,22 @@ import asyncio
 import dns.resolver
 import ipaddress
 from typing import Set
+from rich.console import Console
+
+console = Console()
 
 class SweepScanner:
     """Sweep 스캐너 클래스"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         """
         Args:
             domain (str): 대상 도메인
+            silent (bool): 상태 메시지 출력 여부
         """
         self.domain = domain
-        self.subdomains: Set[str] = set()
+        self.silent = silent
+        self.subdomains = set()
 
     async def reverse_lookup(self, ip: str) -> Set[str]:
         """
@@ -77,36 +82,26 @@ class SweepScanner:
             Set[str]: 발견된 서브도메인 목록
         """
         try:
-            # 도메인의 IP 주소 조회
+            # IP 범위 결정 및 리버스 DNS 조회
             ips = await self.get_domain_ips()
-            
-            # 각 IP 주소에 대해 리버스 DNS 조회
             for ip in ips:
                 try:
-                    # IP 주소를 기반으로 /24 범위 생성
-                    ip_obj = ipaddress.ip_address(ip)
-                    if isinstance(ip_obj, ipaddress.IPv4Address):
-                        network = ipaddress.ip_network(f"{ip_obj}/24", strict=False)
-                    else:
-                        network = ipaddress.ip_network(f"{ip_obj}/120", strict=False)
-                        
-                    # 범위 내 각 IP에 대해 리버스 DNS 조회
-                    for addr in network:
-                        domains = await self.reverse_lookup(str(addr))
-                        self.subdomains.update(domains)
+                    hostname = await self.reverse_lookup(ip)
+                    if hostname and hostname.endswith(f".{self.domain}"):
+                        self.subdomains.add(hostname)
                 except:
                     continue
-                    
             return self.subdomains
             
         except Exception as e:
-            print(f"Error during Sweep scan: {str(e)}")
+            if not self.silent:
+                console.print(f"[bold red][-][/] Error in Reverse DNS sweep: {str(e)}")
             return set()
 
 async def main():
     """테스트용 메인 함수"""
     try:
-        domain = "verily.com"  # 테스트할 도메인
+        domain = "vulnweb.com"
         scanner = SweepScanner(domain)
         results = await scanner.scan()
         

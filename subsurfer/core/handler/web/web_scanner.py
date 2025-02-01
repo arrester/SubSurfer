@@ -17,11 +17,19 @@ console = Console()
 class WebScanner:
     """웹 서비스 스캐너"""
     
-    def __init__(self, domain: str, ports: List[int] = None, verbose: int = 0):
+    def __init__(self, domain: str, ports: List[int] = None, verbose: int = 0, silent: bool = False):
+        """
+        Args:
+            domain (str): 대상 도메인
+            ports (List[int]): 스캔할 포트 목록
+            verbose (int): verbose 레벨
+            silent (bool): 상태 메시지 출력 여부
+        """
         self.domain = domain
         self.ports = ports  # 포트가 지정된 경우 그대로 사용
         self.default_ports = [80, 443]  # 기본 포트는 별도 저장
         self.verbose = verbose  # verbose 저장
+        self.silent = silent  # silent 모드 저장
         self.wappalyzer = Wappalyzer.latest()
         self.user_agents = [
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -88,7 +96,7 @@ class WebScanner:
         web_services = {}
         scan_ports = self.ports if self.ports else self.default_ports
         
-        if self.verbose:
+        if self.verbose and not self.silent:
             console.print(f"[bold blue][*][/] Scanning ports for {subdomain}: {scan_ports}")
         
         for port in scan_ports:
@@ -113,10 +121,12 @@ class WebScanner:
             """세마포어를 사용한 스캔"""
             async with semaphore:
                 try:
-                    console.print(f"[bold blue][*][/] [white]Scanning: {subdomain}[/]")
+                    if not self.silent:
+                        console.print(f"[bold blue][*][/] [white]Scanning: {subdomain}[/]")
                     return await self.scan_subdomain(subdomain)
                 except Exception as e:
-                    console.print(f"[bold red][-][/] [white]{subdomain} Error during scanning: {str(e)}[/]")
+                    if not self.silent:
+                        console.print(f"[bold red][-][/] [white]{subdomain} Error during scanning: {str(e)}[/]")
                     return {}
         
         # 모든 서브도메인에 대해 동시에 스캔 실행

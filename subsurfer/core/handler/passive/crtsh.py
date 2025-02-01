@@ -7,10 +7,11 @@ from typing import Set
 class CrtshScanner:
     """Certificate Transparency logs scanner using crt.sh"""
     
-    def __init__(self, domain: str):
+    def __init__(self, domain: str, silent: bool = False):
         self.domain = domain
         self.base_url = "https://crt.sh"
         self.subdomains = set()
+        self.silent = silent
         
     async def request(self, url: str) -> dict:
         """비동기 HTTP 요청 수행"""
