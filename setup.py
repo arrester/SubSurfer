@@ -24,6 +24,7 @@ setup(
         'pytest>=7.4.3',
         'pytest-asyncio>=0.23.2',
         'python-Wappalyzer>=0.3.1'
+        'ptyhon-setuptools>=75.7.0'
     ],
     entry_points={
         'console_scripts': [
