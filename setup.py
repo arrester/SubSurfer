@@ -23,7 +23,8 @@ setup(
         'asyncio>=3.4.3',
         'pytest>=7.4.3',
         'pytest-asyncio>=0.23.2',
-        'python-Wappalyzer>=0.3.1'
+        'python-Wappalyzer>=0.3.1',
+        'setuptools>=75.6.0'
     ],
     entry_points={
         'console_scripts': [
