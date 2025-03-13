@@ -192,4 +192,4 @@ if __name__ == "__main__":
 MIT License
 
 ## 🤝 Contributions
-Bug Report, Feature Suggestions, Pull Request
+Bug Report, Feature Suggestions, Issue Report
