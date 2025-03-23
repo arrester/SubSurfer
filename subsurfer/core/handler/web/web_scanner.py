@@ -115,7 +115,7 @@ class WebScanner:
         web_services = {}
         
         # 동시 실행할 최대 작업 수 제한
-        semaphore = asyncio.Semaphore(10)  # 동시에 10개까지 실행
+        semaphore = asyncio.Semaphore(50)  # 동시에 50개까지 실행
         
         async def scan_with_semaphore(subdomain: str):
             """세마포어를 사용한 스캔"""

@@ -31,7 +31,7 @@ def print_banner(force=False):
     \ `--.  _   _ | |__  \ `--.  _   _  _ __ | |_   ___  _ __ 
      `--. \| | | || '_ \  `--. \| | | || '__||  _| / _ \| '__|
     /\__/ /| |_| || |_) |/\__/ /| |_| || |   | |  |  __/| |   
-    \____/  \__,_||_.__/ \____/  \__,_||_|   |_|   \___||_|   v0.2
+    \____/  \__,_||_.__/ \____/  \__,_||_|   |_|   \___||_|   v0.3
     """
     
     # 배너 패널 생성
@@ -104,6 +104,7 @@ def print_usage():
     options_table.add_row("-pipesub", "Output subdomain results for pipeline")
     options_table.add_row("-pipeact", "Output webserver + not webserver activate server results for pipeline")
     options_table.add_row("-pipewsub", "Output subdomain webserver host results for pipeline")
+    options_table.add_row("-pipejson", "Output all results in JSON format for pipeline")
     options_table.add_row("-to, --takeover", "[Coming Soon] Subdomain takeover detection")
     
     # 출력

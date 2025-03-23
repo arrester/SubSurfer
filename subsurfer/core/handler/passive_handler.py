@@ -27,6 +27,8 @@ from subsurfer.core.handler.passive.shrewdeye import ShrewdEyeScanner
 from subsurfer.core.handler.passive.subdomaincenter import SubdomainCenterScanner
 from subsurfer.core.handler.passive.webarchive import WebArchiveScanner
 from subsurfer.core.handler.passive.dnsarchive import DNSArchiveScanner
+from subsurfer.core.handler.passive.subdomainfinder import SubdomainFinderScanner
+from subsurfer.core.handler.passive.freecampdev import FreecampDevScanner
 
 console = Console()
 
@@ -56,6 +58,8 @@ class PassiveHandler:
             ('SubdomainCenter', SubdomainCenterScanner(self.target, self.silent)),
             ('WebArchive', WebArchiveScanner(self.target, self.silent)),
             ('DNS Archive', DNSArchiveScanner(self.target, self.silent)),
+            ('SubdomainFinder', SubdomainFinderScanner(self.target, self.silent)),
+            ('FreecampDev', FreecampDevScanner(self.target, self.silent)),
         ]
         
     async def collect(self) -> Set[str]:
