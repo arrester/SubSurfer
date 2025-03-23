@@ -2,7 +2,7 @@
 
 ![Python Version](https://img.shields.io/badge/python-3.13%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-0.2-orange)
+![Version](https://img.shields.io/badge/version-0.3-orange)
 
 SubSurfer는 빠르고 효율적인 서브도메인 열거 및 웹 자산 식별 도구입니다.
 ![alt text](image.png)
