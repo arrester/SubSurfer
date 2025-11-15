@@ -1,0 +1,5 @@
+include README.md
+include subsurfer/core/config/config.yaml
+include subsurfer/core/handler/takeover/fingerprints.json
+recursive-include subsurfer *
+recursive-include tests * 

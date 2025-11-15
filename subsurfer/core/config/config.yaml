@@ -1,0 +1,18 @@
+# API Keys Configuration
+
+virustotal:
+  - "YOUR_VIRUSTOTAL_API_KEY"
+
+securitytrails:
+  - "YOUR_SECURITYTRAILS_API_KEY"
+
+censys:
+  - "YOUR_CENSYS_API_ID:YOUR_CENSYS_SECRET"
+
+shodan:
+  - "YOUR_SHODAN_API_KEY"
+
+bufferover:
+  - "YOUR_BUFFEROVER_API_KEY"
+
+# Add more API configurations here

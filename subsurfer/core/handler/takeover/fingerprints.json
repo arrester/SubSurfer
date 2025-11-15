@@ -1,0 +1,123 @@
+[
+  {
+    "service": "AWS/S3",
+    "cname": ["s3.amazonaws.com"],
+    "fingerprint": ["NoSuchBucket", "The specified bucket does not exist"],
+    "http_status": [404, 403]
+  },
+  {
+    "service": "GitHub Pages",
+    "cname": ["github.io", "github.com"],
+    "fingerprint": ["There isn't a GitHub Pages site here", "For root URLs (like http://example.com/) you must provide an index.html file"],
+    "http_status": [404]
+  },
+  {
+    "service": "Heroku",
+    "cname": ["herokuapp.com", "herokussl.com"],
+    "fingerprint": ["no-such-app.html", "No such app"],
+    "http_status": [404]
+  },
+  {
+    "service": "Shopify",
+    "cname": ["myshopify.com"],
+    "fingerprint": ["Sorry, this shop is currently unavailable"],
+    "http_status": [404]
+  },
+  {
+    "service": "Tumblr",
+    "cname": ["tumblr.com"],
+    "fingerprint": ["Whatever you were looking for doesn't currently exist at this address"],
+    "http_status": [404]
+  },
+  {
+    "service": "WordPress.com",
+    "cname": ["wordpress.com"],
+    "fingerprint": ["Do you want to register"],
+    "http_status": [200, 404]
+  },
+  {
+    "service": "Ghost",
+    "cname": ["ghost.io"],
+    "fingerprint": ["The thing you were looking for is no longer here"],
+    "http_status": [404]
+  },
+  {
+    "service": "Cargo Collective",
+    "cname": ["cargocollective.com"],
+    "fingerprint": ["404 Not Found"],
+    "http_status": [404]
+  },
+  {
+    "service": "Feedpress",
+    "cname": ["redirect.feedpress.me"],
+    "fingerprint": ["The feed has not been found"],
+    "http_status": [404]
+  },
+  {
+    "service": "StatusPage",
+    "cname": ["statuspage.io"],
+    "fingerprint": ["You are being <a href=\"https://www.statuspage.io\">redirected"],
+    "http_status": [404]
+  },
+  {
+    "service": "Uservoice",
+    "cname": ["uservoice.com"],
+    "fingerprint": ["This UserVoice subdomain is currently available"],
+    "http_status": [404]
+  },
+  {
+    "service": "Surge.sh",
+    "cname": ["surge.sh"],
+    "fingerprint": ["project not found"],
+    "http_status": [404]
+  },
+  {
+    "service": "Bitbucket",
+    "cname": ["bitbucket.io"],
+    "fingerprint": ["Repository not found"],
+    "http_status": [404]
+  },
+  {
+    "service": "Pantheon",
+    "cname": ["pantheonsite.io"],
+    "fingerprint": ["404 error unknown site!"],
+    "http_status": [404]
+  },
+  {
+    "service": "Tilda",
+    "cname": ["tilda.ws"],
+    "fingerprint": ["Please renew your subscription"],
+    "http_status": [404]
+  },
+  {
+    "service": "Microsoft Azure",
+    "cname": ["azurewebsites.net", "cloudapp.azure.com", "cloudapp.net", "trafficmanager.net", "blob.core.windows.net"],
+    "fingerprint": ["404 Web Site not found", "Error 404"],
+    "http_status": [404]
+  },
+  {
+    "service": "Fastly",
+    "cname": ["fastly.net"],
+    "fingerprint": ["Fastly error: unknown domain"],
+    "http_status": [404]
+  },
+  {
+    "service": "Netlify",
+    "cname": ["netlify.com", "netlify.app"],
+    "fingerprint": ["Not Found - Request ID"],
+    "http_status": [404]
+  },
+  {
+    "service": "Zendesk",
+    "cname": ["zendesk.com"],
+    "fingerprint": ["Help Center Closed"],
+    "http_status": [404]
+  },
+  {
+    "service": "AWS Elastic Beanstalk",
+    "cname": ["elasticbeanstalk.com"],
+    "fingerprint": ["404 Not Found"],
+    "http_status": [404]
+  }
+]
+
