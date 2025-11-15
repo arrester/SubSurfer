@@ -2,7 +2,7 @@ from setuptools import setup, find_namespace_packages
 
 setup(
     name="subsurfer",
-    version="1.0",
+    version="1.2.2",
     description="Red Teaming and Web Bug Bounty Fast Asset Identification Tool",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
