@@ -169,18 +169,12 @@ if __name__ == "__main__":
 <br>
 
 ## 🗺️ To-Do List
-### Version 0.3
-- Add JSON output option
+### Version 1.5
 - Add new passive modules
-- Additional etc feature updates
+- Add Cloud Detect modules
 
-### Version 0.4
-- Add new passive modules
-- Implement subdomain takeover detection
-
-### Version 0.5
-- Add new passive modules
-- Add new active modules
+### Version 2.0
+- Add AI Recon Model
 
 ## 📋 Requirements
 - Recommended: Python 3.13.0 or later
