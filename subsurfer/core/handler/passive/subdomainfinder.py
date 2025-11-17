@@ -82,7 +82,7 @@ class SubdomainFinderScanner:
             
             async with aiohttp.ClientSession() as session:
                 # post request - scan
-                async with session.post(self.base_url, headers=headers, data=form_data, allow_redirects=False) as response:
+                async with session.post(self.base_url, headers=headers, data=form_data, allow_redirects=False, ssl=False) as response:
                     if response.status != 302:
                         if not self.silent:
                             console.print(f"[bold red][-] SubdomainFinder 요청 실패: HTTP {response.status}[/]")
@@ -103,7 +103,7 @@ class SubdomainFinderScanner:
                         "User-Agent": headers["User-Agent"],
                         "Accept": headers["Accept"],
                         "Referer": self.base_url
-                    }) as result_response:
+                    }, ssl=False) as result_response:
                         if result_response.status != 200:
                             if not self.silent:
                                 console.print(f"[bold red][-] 스캔 결과 페이지 요청 실패: HTTP {result_response.status}[/]")

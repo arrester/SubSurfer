@@ -24,7 +24,7 @@ class AnubisDBScanner:
     async def request(self, url: str) -> dict:
         """비동기 HTTP 요청 수행"""
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
+            async with session.get(url, ssl=False) as response:
                 if response.status == 200:
                     return await response.json()
                 return {}

@@ -5,8 +5,13 @@ import asyncio
 import aiohttp
 import json
 import os
+import warnings
 from typing import Set, List, Dict
 from rich.console import Console
+
+# aiodns 경고 메시지 억제
+warnings.filterwarnings('ignore', message='.*Failed to create DNS resolver.*')
+warnings.filterwarnings('ignore', message='.*Failed to initialize c-ares.*')
 
 console = Console()
 
@@ -37,9 +42,20 @@ class TakeoverHandler:
         """DNS CNAME 레코드 조회"""
         try:
             import aiodns
-            resolver = aiodns.DNSResolver()
-            result = await resolver.query(domain, 'CNAME')
-            return result.cname if result else None
+            import sys
+            import io
+            
+            # stderr를 임시로 리다이렉트하여 c-ares 경고 메시지 억제
+            old_stderr = sys.stderr
+            sys.stderr = io.StringIO()
+            
+            try:
+                resolver = aiodns.DNSResolver()
+                result = await resolver.query(domain, 'CNAME')
+                return result.cname if result else None
+            finally:
+                # stderr 복원
+                sys.stderr = old_stderr
         except:
             return None
     

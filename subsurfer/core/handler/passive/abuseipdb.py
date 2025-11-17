@@ -22,7 +22,7 @@ class AbuseIPDBScanner:
             url = f'https://www.abuseipdb.com/whois/{self.domain}'
             
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=self.headers) as response:
+                async with session.get(url, headers=self.headers, ssl=False) as response:
                     text = await response.text()
                     
             # HTML 파싱

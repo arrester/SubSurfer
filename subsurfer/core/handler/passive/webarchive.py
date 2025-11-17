@@ -41,7 +41,7 @@ class WebArchiveScanner:
             }
             
             async with aiohttp.ClientSession() as session:
-                async with session.get(self.base_url, params=params) as response:
+                async with session.get(self.base_url, params=params, ssl=False) as response:
                     if response.status != 200:
                         return set()
                         

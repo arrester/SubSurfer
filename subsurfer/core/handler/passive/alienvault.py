@@ -36,7 +36,7 @@ class AlienVaultScanner:
             url = f"{self.base_url}/{self.domain}/passive_dns"
             
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
+                async with session.get(url, ssl=False) as response:
                     if response.status != 200:
                         return set()
                         
