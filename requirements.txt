@@ -27,9 +27,9 @@ pytest==8.3.4
 pytest-asyncio==0.25.0
 python-Wappalyzer==0.3.1
 PyYAML==6.0.2
-requests==2.32.4
+requests==2.32.5
 rich==13.9.4
-setuptools==78.1.1
+setuptools==81.0.0
 soupsieve==2.6
-urllib3==2.5.0
+urllib3==2.6.3
 yarl==1.18.3
