@@ -2,7 +2,7 @@
 
 ![Python Version](https://img.shields.io/badge/python-3.13%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-1.0-orange)
+![Version](https://img.shields.io/badge/version-1.2-orange)
 
 SubSurfer is a fast and efficient subdomain enumeration and web property identification tool.
 ![alt text](image.png)
