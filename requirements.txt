@@ -25,7 +25,7 @@ propcache==0.2.1
 Pygments==2.18.0
 pytest==8.3.4
 pytest-asyncio==0.25.0
-python-Wappalyzer==0.3.1
+python-Wappalyzer @ git+https://github.com/mirusu400/python-Wappalyzer
 PyYAML==6.0.2
 requests==2.32.5
 rich==13.9.4
